@@ -1,72 +1,3 @@
-// import React, { useRef, useEffect, useState } from 'react'
-
-// export default function CameraCapture({ onCapture }) {
-//   const videoRef = useRef(null)
-//   const canvasRef = useRef(null)
-//   const [streaming, setStreaming] = useState(false)
-
-//   useEffect(() => {
-//     return () => {
-//       if (videoRef.current && videoRef.current.srcObject) {
-//         videoRef.current.srcObject.getTracks().forEach(t => t.stop())
-//       }
-//     }
-//   }, [])
-
-//   async function startCamera() {
-//     if (streaming) return
-//     try {
-//       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
-//       videoRef.current.srcObject = stream
-//       await videoRef.current.play()
-//       setStreaming(true)
-//     } catch (e) {
-//       alert('Cannot access camera: ' + e.message)
-//     }
-//   }
-
-//   function stopCamera() {
-//     if (videoRef.current && videoRef.current.srcObject) {
-//       videoRef.current.srcObject.getTracks().forEach(t => t.stop())
-//     }
-//     setStreaming(false)
-//   }
-
-//   function capture() {
-//     const video = videoRef.current
-//     const canvas = canvasRef.current
-//     canvas.width = video.videoWidth
-//     canvas.height = video.videoHeight
-//     const ctx = canvas.getContext('2d')
-//     ctx.drawImage(video, 0, 0)
-//     canvas.toBlob(blob => {
-//       const url = canvas.toDataURL('image/jpeg')
-//       onCapture(url, blob)
-//     }, 'image/jpeg', 0.9)
-//   }
-
-//   return (
-//     <div>
-//       <div className="camera">
-//         <video ref={videoRef} style={{ width: '100%', borderRadius: 8 }} />
-//         <canvas ref={canvasRef} style={{ display: 'none' }} />
-//       </div>
-//       <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-//         {!streaming ? (
-//           <button className="btn" onClick={startCamera}>Open Camera</button>
-//         ) : (
-//           <>
-//             <button className="btn" onClick={capture}>Capture</button>
-//             <button className="btn ghost" onClick={stopCamera}>Close Camera</button>
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   )
-// }
-
-
-// src/components/CameraCapture.jsx
 import React, { useRef, useEffect, useState } from 'react'
 
 export default function CameraCapture({ onCapture }) {
@@ -93,15 +24,12 @@ export default function CameraCapture({ onCapture }) {
   async function startCamera() {
     if (streaming) return
     setError(null)
-    
-    // First set streaming to true so video element renders
+
     setStreaming(true)
     
-    // Wait for next tick to ensure video element is mounted
     await new Promise(resolve => setTimeout(resolve, 100))
     
     try {
-      // Now check if video ref is available
       if (!videoRef.current) {
         throw new Error('Video element not ready. Please try again.')
       }
@@ -155,13 +83,12 @@ export default function CameraCapture({ onCapture }) {
     const ctx = canvas.getContext('2d')
     ctx.drawImage(video, 0, 0)
     
-    // Flash effect
     setTimeout(() => setCapturing(false), 150)
     
     canvas.toBlob(blob => {
       const url = canvas.toDataURL('image/jpeg')
       onCapture(url, blob)
-      stopCamera() // Auto-close camera after capture
+      stopCamera() 
     }, 'image/jpeg', 0.95)
   }
 
