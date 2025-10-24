@@ -12,7 +12,7 @@ export default function Detector({onBack}){
   const canvasRef = useRef(null)
   const containerRef = useRef(null)
 
-  const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
   useEffect(()=>{
     if(result && imageSrc){
