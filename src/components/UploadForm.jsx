@@ -1,28 +1,3 @@
-// import React from 'react'
-
-// export default function UploadForm({ onImage }) {
-//   function handleFile(ev) {
-//     const f = ev.target.files[0]
-//     if (!f) return
-//     const reader = new FileReader()
-//     reader.onload = () => {
-//       const blob = new Blob([f], { type: f.type })
-//       onImage(reader.result, blob)
-//     }
-//     reader.readAsDataURL(f)
-//   }
-
-//   return (
-//     <div>
-//       <label className="upload-label">
-//         Choose image
-//         <input type="file" accept="image/*" onChange={handleFile} />
-//       </label>
-//     </div>
-//   )
-// }
-
-// src/components/UploadForm.jsx
 import React from 'react'
 
 export default function UploadForm({ onImage }) {
@@ -30,13 +5,11 @@ export default function UploadForm({ onImage }) {
     const f = ev.target.files[0]
     if (!f) return
     
-    // Validate file type
     if (!f.type.startsWith('image/')) {
       alert('Please select a valid image file')
       return
     }
-    
-    // Validate file size (max 10MB)
+
     if (f.size > 10 * 1024 * 1024) {
       alert('File too large. Maximum size is 10MB')
       return
