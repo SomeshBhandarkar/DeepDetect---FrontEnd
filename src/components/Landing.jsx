@@ -1,4 +1,3 @@
-// src/components/Landing.jsx
 import React from 'react'
 
 export default function Landing({ onStart }) {
