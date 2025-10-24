@@ -1,117 +1,3 @@
-// // src/components/Detector.jsx
-// import React, {useState, useRef, useEffect} from 'react'
-// import CameraCapture from './CameraCapture'
-// import UploadForm from './UploadForm'
-// import axios from 'axios'
-
-// export default function Detector({onBack}){
-//   const [imageSrc, setImageSrc] = useState(null)
-//   const [loading, setLoading] = useState(false)
-//   const [result, setResult] = useState(null)
-//   const canvasRef = useRef(null)
-
-//   // API base: use Vite env var if present, otherwise localhost:8000
-//   const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
-
-//   useEffect(()=>{
-//     if(result && imageSrc){
-//       drawDetections(result.detections)
-//     }
-//   },[result,imageSrc])
-
-//   function drawDetections(detections){
-//     const canvas = canvasRef.current
-//     if(!canvas) return
-//     const ctx = canvas.getContext('2d')
-//     const img = new Image()
-//     img.onload = ()=>{
-//       canvas.width = img.width
-//       canvas.height = img.height
-//       ctx.clearRect(0,0,canvas.width,canvas.height)
-//       ctx.drawImage(img,0,0)
-//       ctx.lineWidth = Math.max(2, img.width/300)
-//       ctx.font = `${Math.max(12, img.width/60)}px Arial`
-//       detections.forEach(d=>{
-//         const [x1,y1,x2,y2] = d.bbox_xyxy || d.bbox || [0,0,0,0]
-//         const w = x2 - x1
-//         const h = y2 - y1
-//         ctx.strokeStyle = '#7ee787'
-//         ctx.strokeRect(x1,y1,w,h)
-//         const label = `${d.class_name} ${Math.round(d.confidence*100)}%`
-//         const textW = ctx.measureText(label).width
-//         ctx.fillStyle = '#0b0d10'
-//         ctx.fillRect(x1, y1 - 24, textW + 8, 24)
-//         ctx.fillStyle = '#7ee787'
-//         ctx.fillText(label, x1 + 4, y1 - 6)
-//       })
-//     }
-//     img.src = imageSrc
-//   }
-
-//   async function sendBlob(blob, filename='capture.jpg'){
-//     setLoading(true)
-//     setResult(null)
-//     try{
-//       const form = new FormData()
-//       form.append('file', blob, filename)
-//       // use absolute backend URL via API_BASE
-//       const resp = await axios.post(`${API_BASE}/api/damage/analyze`, form, {
-//         headers: {'Content-Type': 'multipart/form-data'},
-//         timeout: 120000
-//       })
-//       setResult(resp.data)
-//     }catch(err){
-//       console.error(err)
-//       // show a useful error
-//       const msg = err?.response?.data?.detail || err?.message || 'Unknown error'
-//       alert('Upload failed: ' + msg)
-//     }finally{
-//       setLoading(false)
-//     }
-//   }
-
-//   return (
-//     <div className="page">
-//       <div className="topbar">
-//         <button className="back" onClick={onBack}>◀ Back</button>
-//         <div className="brand small">DeepDetect</div>
-//       </div>
-
-//       <div className="grid">
-//         <div className="card column">
-//           <h3>Input</h3>
-//           <UploadForm onImage={(dataUrl, blob)=>{ setImageSrc(dataUrl); sendBlob(blob) }} />
-//           <div style={{height:12}} />
-//           <CameraCapture onCapture={(dataUrl, blob)=>{ setImageSrc(dataUrl); sendBlob(blob) }} />
-//           <div style={{height:12}} />
-//           <p className="muted">Tip: Use snapshot for stable inference. For continuous mode see README for streaming approach.</p>
-//         </div>
-
-//         <div className="card column">
-//           <h3>Results</h3>
-//           {loading && <div className="muted">Running inference...</div>}
-//           {!imageSrc && <div className="muted">No image yet</div>}
-//           {imageSrc && <canvas ref={canvasRef} style={{width:'100%',borderRadius:8,background:'#000'}} />}
-//           {result && (
-//             <div className="result-box">
-//               <div><strong>ID:</strong> {result.id}</div>
-//               <div><strong>Filename:</strong> {result.filename}</div>
-//               <div style={{height:6}} />
-//               <details>
-//                 <summary>Detections ({result.detections.length})</summary>
-//                 <pre className="muted" style={{whiteSpace:'pre-wrap'}}>{JSON.stringify(result.detections, null, 2)}</pre>
-//               </details>
-//               <div style={{height:8}} />
-//               <a className="btn" href={`${API_BASE}/api/damage/${result.id}`} target="_blank" rel="noreferrer">View JSON</a>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// src/components/Detector.jsx
 import React, {useState, useRef, useEffect} from 'react'
 import CameraCapture from './CameraCapture'
 import UploadForm from './UploadForm'
@@ -143,15 +29,12 @@ export default function Detector({onBack}){
     const img = new Image()
     
     img.onload = ()=>{
-      // Set canvas to actual image dimensions
       canvas.width = img.width
       canvas.height = img.height
       
-      // Clear and draw image
       ctx.clearRect(0,0,canvas.width,canvas.height)
       ctx.drawImage(img,0,0)
       
-      // Draw detections
       ctx.lineWidth = Math.max(3, img.width/200)
       ctx.font = `bold ${Math.max(14, img.width/50)}px Arial`
       
@@ -160,14 +43,12 @@ export default function Detector({onBack}){
         const w = x2 - x1
         const h = y2 - y1
         
-        // Draw bounding box with shadow
         ctx.strokeStyle = '#7ee787'
         ctx.shadowColor = 'rgba(126, 231, 135, 0.5)'
         ctx.shadowBlur = 10
         ctx.strokeRect(x1,y1,w,h)
         ctx.shadowBlur = 0
         
-        // Draw label background
         const label = `${d.class_name} ${Math.round(d.confidence*100)}%`
         const textMetrics = ctx.measureText(label)
         const textW = textMetrics.width + 16
@@ -176,12 +57,10 @@ export default function Detector({onBack}){
         ctx.fillStyle = 'rgba(11, 13, 16, 0.9)'
         ctx.fillRect(x1, y1 - textH - 4, textW, textH)
         
-        // Draw label border
         ctx.strokeStyle = '#7ee787'
         ctx.lineWidth = 2
         ctx.strokeRect(x1, y1 - textH - 4, textW, textH)
         
-        // Draw label text
         ctx.fillStyle = '#7ee787'
         ctx.fillText(label, x1 + 8, y1 - 10)
       })
